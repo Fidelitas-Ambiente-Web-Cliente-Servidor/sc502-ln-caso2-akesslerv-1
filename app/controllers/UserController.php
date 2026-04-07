@@ -44,22 +44,48 @@ class UserController
     }
 
     public function registro()
-    {
-        $username = $_POST['username'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+{
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-        $result = $this->model->create($username, $password);
-
-        if ($result) {
-            echo json_encode(['response' => "00", 'message' => "Registro exitoso"]);
-        } else {
-            echo json_encode(['response' => "01", 'message' => "Error al registrar"]);
-        }
+    if (!$username || !$password) {
+        echo json_encode([
+            'response' => "01",
+            'message' => "Campos requeridos"
+        ]);
+        return;
     }
+
+    //  validar usuario existente
+    if ($this->model->exists($username)) {
+        echo json_encode([
+            'response' => "01",
+            'message' => "El usuario ya existe"
+        ]);
+        return;
+    }
+
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+    $result = $this->model->create($username, $passwordHash);
+
+    if ($result) {
+        echo json_encode([
+            'response' => "00",
+            'message' => "Registro exitoso"
+        ]);
+    } else {
+        echo json_encode([
+            'response' => "01",
+            'message' => "Error al registrar"
+        ]);
+    }
+}
 
     public function logout()
     {
         session_destroy();
-        echo json_encode(['response' => "00", 'message' => "Sesión cerrada"]);
+        echo json_encode(['response' => "00"]);
+        exit;
     }
 }

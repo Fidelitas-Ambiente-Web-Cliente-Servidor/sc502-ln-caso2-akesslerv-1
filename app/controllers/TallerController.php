@@ -25,28 +25,66 @@ class TallerController
         }
         require __DIR__ . '/../views/taller/listado.php';
     }
-    
+
     public function getTalleresJson()
     {
         if (!isset($_SESSION['id'])) {
             echo json_encode([]);
-            return;
+            exit;
         }
-        
+
         $talleres = $this->tallerModel->getAllDisponibles();
         header('Content-Type: application/json');
         echo json_encode($talleres);
+        exit;
     }
-    
+
     public function solicitar()
     {
         if (!isset($_SESSION['id'])) {
             echo json_encode(['success' => false, 'error' => 'Debes iniciar sesión']);
             return;
         }
-        
+
         $tallerId = $_POST['taller_id'] ?? 0;
         $usuarioId = $_SESSION['id'];
 
+        // validar que venga un id valido
+        if (!$tallerId) {
+            echo json_encode(['success' => false, 'error' => 'Taller inválido']);
+            return;
+        }
+
+        // validar  que el taller exista y tenga cupo
+        $taller = $this->tallerModel->getById($tallerId);
+
+        if (!$taller || $taller['cupo_disponible'] <= 0) {
+            echo json_encode(['success' => false, 'error' => 'No hay cupos disponibles']);
+            return;
+        }
+
+        // validar duplicados
+        if ($this->solicitudModel->existeSolicitud($usuarioId, $tallerId)) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Ya tienes una solicitud para este taller'
+            ]);
+            return;
+        }
+
+        // crear solicitud
+        $creada = $this->solicitudModel->crearSolicitud($usuarioId, $tallerId);
+
+        if ($creada) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Solicitud enviada correctamente'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Error al procesar la solicitud'
+            ]);
+        }
     }
 }

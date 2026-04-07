@@ -22,7 +22,7 @@ class User
     {
         $query = "INSERT INTO usuarios (username, password, rol) VALUES (?, ?, 'usuario')";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ss", $username,  $password);
+        $stmt->bind_param("ss", $username, $password);
         $stmt->execute();
         return $stmt->affected_rows > 0;
     }
@@ -35,5 +35,15 @@ class User
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_assoc();
+    }
+
+    public function exists($username)
+    {
+        $query = "SELECT id FROM usuarios WHERE username = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+
+        return $stmt->get_result()->num_rows > 0;
     }
 }

@@ -1,51 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Solicitudes pendientes</title>
-    <link rel="stylesheet" href="/public/css/style.css">
+    <title>Admin - Solicitudes</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="public/js/jquery-4.0.0.min.js"></script>
-    
 </head>
-<body>
-    <nav>
+
+<body class="container mt-5">
+
+    <nav class="d-flex justify-content-between mb-4">
         <div>
-            <a href="index.php?page=talleres">Talleres</a>
-            <a href="index.php?page=admin">Gestionar Solicitudes</a>
+            <a class="btn btn-outline-primary" href="index.php?page=talleres">Talleres</a>
+            <a class="btn btn-outline-dark" href="index.php?page=admin">Admin</a>
         </div>
         <div>
-            <span>Admin: <?= htmlspecialchars($_SESSION['nombre'] ?? $_SESSION['user'] ?? 'Administrador') ?></span>
-            <button id="btnLogout" class="btn-logout">Cerrar sesión</button>
+            <span class="me-3 fw-bold">
+                Admin: <?= htmlspecialchars($_SESSION['user'] ?? 'Admin') ?>
+            </span>
+            <button id="btnLogout" class="btn btn-danger">Cerrar sesión</button>
         </div>
     </nav>
-    
-    <main>
-        <h2>Solicitudes pendientes de aprobación</h2>
-        
-        <div class="table-container">
-            <table id="tabla-solicitudes">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Taller</th>
-                        <th>Solicitante</th>
-                        <th>Usuario</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="solicitudes-body">
-                    <tr>
-                        <td colspan="6" class="loader">Cargando solicitudes...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </main>
 
-    <div id="mensaje"></div>
+    <h3>Solicitudes pendientes</h3>
 
-    
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Taller</th>
+                <th>Usuario</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="solicitudes-body">
+            <tr>
+                <td colspan="5" class="text-center">No hay solicitudes</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="mensaje" class="mt-3" style="display:none;"></div>
+
+    <script src="public/js/solicitud.js"></script>
+
 </body>
 </html>
